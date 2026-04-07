@@ -19,7 +19,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'HR Portal',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF667eea)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 247, 100, 97),
+          brightness: Brightness.light,
+        ),
+        scaffoldBackgroundColor: const Color(0xFFEEEEEE),
       ),
       home: const SplashScreen(),
     );
@@ -71,8 +75,8 @@ class _SplashScreenState extends State<SplashScreen>
                 const WebViewScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                  return FadeTransition(opacity: animation, child: child);
+                },
             transitionDuration: const Duration(milliseconds: 500),
           ),
         );
@@ -96,10 +100,7 @@ class _SplashScreenState extends State<SplashScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
+            colors: [Color(0xFFE53935), Color(0xFFB71C1C)],
           ),
         ),
         child: AnimatedBuilder(
@@ -129,7 +130,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: const Icon(
                         Icons.language,
                         size: 60,
-                        color: Color(0xFF667eea),
+                        color: Color(0xFFE53935),
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -215,16 +216,16 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HR Portal'),
-        backgroundColor: const Color(0xFF667eea),
-        foregroundColor: Colors.white,
-        elevation: 0,
+        // title: const Text('HR Portal'),
+        // backgroundColor: Colors.white,
+        // foregroundColor: Colors.black,
+        // elevation: 0,
       ),
       body: _isWindows
           ? Webview(_windowsController)
           : _mobileController != null
-              ? WebViewWidget(controller: _mobileController!)
-              : const Center(child: CircularProgressIndicator()),
+          ? WebViewWidget(controller: _mobileController!)
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }
