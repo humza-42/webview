@@ -5,8 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_windows/webview_windows.dart';
 
+Future<void> clearWebViewCache() async {
+  if (Platform.isWindows) {
+    final appDataPath = Platform.environment['LOCALAPPDATA'];
+    if (appDataPath != null) {
+      final webView2Path = Directory('$appDataPath\\Microsoft\\Edge\\User\\Default\\Cache');
+      final webView2CodeCachePath = Directory('$appDataPath\\Microsoft\\Edge\\User\\Default\\Code Cache');
+      
+      try {
+        if (await webView2Path.exists()) {
+          await webView2Path.delete(recursive: true);
+        }
+        if (await webView2CodeCachePath.exists()) {
+          await webView2CodeCachePath.delete(recursive: true);
+        }
+      } catch (e) {
+        debugPrint('Error clearing WebView2 cache: $e');
+      }
+    }
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  await clearWebViewCache();
+  
   runApp(const MyApp());
 }
 
@@ -17,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'HR Portal',
+      title: 'Bitstorm Solutions HR System',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 247, 100, 97),
@@ -202,12 +226,21 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Future<void> _initWebView() async {
     if (_isWindows) {
       await _windowsController.initialize();
+      
+      try {
+        await _windowsController.clearCache();
+        await _windowsController.clearCookies();
+      } catch (e) {
+        debugPrint('WebView2 built-in clear methods error: $e');
+      }
+      
       await _windowsController.setBackgroundColor(Colors.transparent);
       await _windowsController.loadUrl('https://hr.bitstormsolutions.com/');
     } else {
       _mobileController = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..loadRequest(Uri.parse('https://hr.bitstormsolutions.com/'));
+      await _mobileController!.clearCache();
     }
     if (mounted) setState(() {});
   }
