@@ -9,9 +9,13 @@ Future<void> clearWebViewCache() async {
   if (Platform.isWindows) {
     final appDataPath = Platform.environment['LOCALAPPDATA'];
     if (appDataPath != null) {
-      final webView2Path = Directory('$appDataPath\\Microsoft\\Edge\\User\\Default\\Cache');
-      final webView2CodeCachePath = Directory('$appDataPath\\Microsoft\\Edge\\User\\Default\\Code Cache');
-      
+      final webView2Path = Directory(
+        '$appDataPath\\Microsoft\\Edge\\User\\Default\\Cache',
+      );
+      final webView2CodeCachePath = Directory(
+        '$appDataPath\\Microsoft\\Edge\\User\\Default\\Code Cache',
+      );
+
       try {
         if (await webView2Path.exists()) {
           await webView2Path.delete(recursive: true);
@@ -28,9 +32,9 @@ Future<void> clearWebViewCache() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await clearWebViewCache();
-  
+
   runApp(const MyApp());
 }
 
@@ -151,15 +155,15 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.language,
-                        size: 60,
-                        color: Color(0xFFE53935),
+                      child: Image.asset(
+                        'assets/icon/icon.png',
+                        width: 60,
+                        height: 60,
                       ),
                     ),
                     const SizedBox(height: 30),
                     const Text(
-                      'HR Portal',
+                      'Bitstorm HR System',
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
@@ -226,15 +230,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Future<void> _initWebView() async {
     if (_isWindows) {
       await _windowsController.initialize();
-      
+
       try {
         await _windowsController.clearCache();
         await _windowsController.clearCookies();
       } catch (e) {
         debugPrint('WebView2 built-in clear methods error: $e');
       }
-      
+
       await _windowsController.setBackgroundColor(Colors.transparent);
+      await _windowsController.addScriptToExecuteOnDocumentCreated(
+        "document.body.style.overflow = 'hidden'; document.documentElement.style.overflow = 'hidden';",
+      );
       await _windowsController.loadUrl('https://hr.bitstormsolutions.com/');
     } else {
       _mobileController = WebViewController()
@@ -248,12 +255,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // title: const Text('HR Portal'),
-        // backgroundColor: Colors.white,
-        // foregroundColor: Colors.black,
-        // elevation: 0,
-      ),
       body: _isWindows
           ? Webview(_windowsController)
           : _mobileController != null
