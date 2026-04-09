@@ -145,7 +145,6 @@ class _SplashScreenState extends State<SplashScreen>
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
@@ -155,10 +154,13 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        'assets/icon/icon.png',
-                        width: 60,
-                        height: 60,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Image.asset(
+                          'assets/icon/logo_2.png',
+                          width: 60,
+                          height: 60,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 30),
